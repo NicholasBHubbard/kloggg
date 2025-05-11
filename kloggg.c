@@ -15,7 +15,7 @@
 #define kbd_write_command(v) outb(v, KBD_CNTL_REG)
 
 /* Interrupt handler */
-static irqreturn_t keyboard_irq_handler(int irq, void *dev_id) {
+static irqreturn_t kloggg_kbd_irq_handler(int irq, void *dev_id) {
     unsigned char scancode = kbd_read_input();
     unsigned char status = kbd_read_status();
     printk(KERN_INFO "Scancode: 0x%02x, Status: 0x%02x\n", scancode, status);
@@ -24,7 +24,7 @@ static irqreturn_t keyboard_irq_handler(int irq, void *dev_id) {
 
 /* Module initialization */
 static int __init custom_init(void) {
-    int result = request_irq(KEYBOARD_IRQ, my_keyboard_irq_handler,
+    int result = request_irq(KEYBOARD_IRQ, kloggg_kbd_irq_handler,
                              IRQF_SHARED, "my_keyboard", (void *)(my_keyboard_irq_handler));
     if (result) {
         printk(KERN_ERR "Failed to register keyboard IRQ handler\n");
