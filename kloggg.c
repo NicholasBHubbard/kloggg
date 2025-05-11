@@ -25,7 +25,7 @@ static irqreturn_t kloggg_kbd_irq_handler(int irq, void *dev_id) {
 /* Module initialization */
 static int __init custom_init(void) {
     int result = request_irq(KEYBOARD_IRQ, kloggg_kbd_irq_handler,
-                             IRQF_SHARED, "my_keyboard", (void *)(my_keyboard_irq_handler));
+                             IRQF_SHARED, "kloggg", (void *)(kloggg_kbd_irq_handler));
     if (result) {
         printk(KERN_ERR "Failed to register keyboard IRQ handler\n");
         return result;
