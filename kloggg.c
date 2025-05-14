@@ -11,19 +11,19 @@ MODULE_LICENSE("GPL");
 static u_short kloggg_keycode_to_symbol(unsigned int keycode, int shift_mask) {
   u_short symbol;
 
-  if (shift_mask & (1 << KG_SHIFT) && shift_mask & (1 << KG_CTRL)) {
+  if ((shift_mask & (1 << KG_SHIFT)) && (shift_mask & (1 << KG_CTRL))) {
     symbol = shift_ctrl_map[keycode];
   }
 
-  else if (shift_mask & (1 << KG_ALT) && shift_mask & (1 << KG_CTRL)) {
+  else if ((shift_mask & (1 << KG_ALT)) && (shift_mask & (1 << KG_CTRL))) {
     symbol = ctrl_alt_map[keycode];
   }
 
-  else if (shift_mask & (1 << KG_ALTGR) && shift_mask & (1 << KG_CTRL)) {
+  else if ((shift_mask & (1 << KG_ALTGR)) && (shift_mask & (1 << KG_CTRL))) {
     symbol = altgr_ctrl_map[keycode];
   }
 
-  else if (shift_mask & (1 << KG_SHIFT) && shift_mask & (1 << KG_ALT)) {
+  else if ((shift_mask & (1 << KG_SHIFT)) && (shift_mask & (1 << KG_ALT))) {
     symbol = shift_alt_map[keycode];
   }
 
