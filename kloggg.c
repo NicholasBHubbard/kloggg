@@ -52,8 +52,10 @@ static char kloggg_keycode_to_symbol(unsigned int keycode, int shift_mask) {
   else {
     symbol = plain_map[keycode];
   }
-  if (symbol < 128) /* ASCII range */
-    return (char)symbol;
+
+  char c = symbol & 0x00FF;  // strip off high bits
+  if (c < 128) /* ASCII range */
+    return c;
   else
     return '?';
 }
