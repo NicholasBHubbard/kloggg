@@ -1,4 +1,4 @@
-kloggg is a kernel-based keylogger for Linux
+A kernel-based keylogger for Linux
 
 # Usage
 
@@ -18,5 +18,5 @@ Key presses are logged to `/proc/kloggg/keylog`
 
 # TODO
 
-* Add detection aversion capabilities
+* Add detection-aversion capabilities
 * Improve implementation for logging non-printable characters
