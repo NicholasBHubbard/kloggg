@@ -18,5 +18,5 @@ Key presses are logged to `/proc/kloggg/keylog`
 
 # TODO
 
-* Add detection-aversion capabilities
+* Add detection-evasion capabilities
 * Improve implementation for logging non-printable characters
